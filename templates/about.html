@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Model Analytics | Aurora Recommender{% endblock %}
+
+{% block content %}
+<div class="space-y-12">
+    <div>
+        <h1 class="text-3xl font-extrabold font-display text-gradient">AI Recommendation Analytics</h1>
+        <p class="text-slate-500 text-sm mt-1">Visualizing data metrics and collaborative latent feature correlation from the training pipeline.</p>
+    </div>
+
+    <!-- Analytics Dashboard Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Card 1: Ratings Distribution -->
+        <div class="glass p-6 rounded-[24px] border border-blue-100/50 space-y-4 shadow-sm">
+            <h3 class="text-lg font-bold font-display text-slate-800">1. Ratings Distribution</h3>
+            <p class="text-xs text-slate-500">Total volume of reviews skewing slightly higher to represent realistic Amazon rating bias.</p>
+            <div class="rounded-xl overflow-hidden border border-blue-100 bg-white p-2">
+                <img src="{{ url_for('static', filename='images/visualizations/rating_distribution.png') }}" alt="Rating Distribution" class="w-full h-auto">
+            </div>
+        </div>
+
+        <!-- Card 2: Category Volume -->
+        <div class="glass p-6 rounded-[24px] border border-blue-100/50 space-y-4 shadow-sm">
+            <h3 class="text-lg font-bold font-display text-slate-800">2. Category Distribution</h3>
+            <p class="text-xs text-slate-500">Balanced catalog listing split between electronics, fashion, outdoors, and home categories.</p>
+            <div class="rounded-xl overflow-hidden border border-blue-100 bg-white p-2">
+                <img src="{{ url_for('static', filename='images/visualizations/category_distribution.png') }}" alt="Category Distribution" class="w-full h-auto">
+            </div>
+        </div>
+
+        <!-- Card 3: Brand Dominance -->
+        <div class="glass p-6 rounded-[24px] border border-blue-100/50 space-y-4 shadow-sm">
+            <h3 class="text-lg font-bold font-display text-slate-800">3. Brand Popularity</h3>
+            <p class="text-xs text-slate-500">Top 10 leading manufacturing brands ranked by product catalog density.</p>
+            <div class="rounded-xl overflow-hidden border border-blue-100 bg-white p-2">
+                <img src="{{ url_for('static', filename='images/visualizations/brand_distribution.png') }}" alt="Brand Distribution" class="w-full h-auto">
+            </div>
+        </div>
+
+        <!-- Card 4: Most Popular Products -->
+        <div class="glass p-6 rounded-[24px] border border-blue-100/50 space-y-4 shadow-sm">
+            <h3 class="text-lg font-bold font-display text-slate-800">4. Top 10 Most Popular Products</h3>
+            <p class="text-xs text-slate-500">Products with the highest interaction records (ratings count) within the user network.</p>
+            <div class="rounded-xl overflow-hidden border border-blue-100 bg-white p-2">
+                <img src="{{ url_for('static', filename='images/visualizations/popular_products.png') }}" alt="Most Popular Products" class="w-full h-auto">
+            </div>
+        </div>
+
+        <!-- Card 5: User Activity Density -->
+        <div class="glass p-6 rounded-[24px] border border-blue-100/50 space-y-4 shadow-sm">
+            <h3 class="text-lg font-bold font-display text-slate-800">5. User Activity Frequency</h3>
+            <p class="text-xs text-slate-500">Frequency distribution mapping user engagement levels (number of reviews per user profile).</p>
+            <div class="rounded-xl overflow-hidden border border-blue-100 bg-white p-2">
+                <img src="{{ url_for('static', filename='images/visualizations/user_activity.png') }}" alt="User Activity" class="w-full h-auto">
+            </div>
+        </div>
+
+        <!-- Card 6: Correlation Matrix -->
+        <div class="glass p-6 rounded-[24px] border border-blue-100/50 space-y-4 shadow-sm">
+            <h3 class="text-lg font-bold font-display text-slate-800">6. Correlation Heatmap Matrix</h3>
+            <p class="text-xs text-slate-500">Mathematical correlation values mapped across user age, product price, and rating values.</p>
+            <div class="rounded-xl overflow-hidden border border-blue-100 bg-white p-2">
+                <img src="{{ url_for('static', filename='images/visualizations/correlation_heatmap.png') }}" alt="Correlation Matrix Heatmap" class="w-full h-auto">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

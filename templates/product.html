@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.product_name }} | Product Details{% endblock %}
+
+{% block content %}
+<div class="space-y-12">
+    <!-- Back to Catalog Link -->
+    <div>
+        <a href="{{ url_for('home', sim_user=current_user) }}" class="text-xs text-slate-500 hover:text-blue-600 flex items-center space-x-1.5 transition font-semibold">
+            <span>←</span> <span>Back to Catalog</span>
+        </a>
+    </div>
+
+    <!-- Product Details Display Card -->
+    <div class="glass border border-blue-100/50 rounded-[32px] overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-8 p-6 md:p-8 shadow-sm">
+        <!-- Product Image with custom fallback error listener -->
+        <div class="aspect-video md:aspect-square bg-white rounded-2xl overflow-hidden flex items-center justify-center border border-blue-100/30">
+            <img src="/{{ product.image_path }}" alt="{{ product.product_name }}" class="w-full h-full object-cover" onerror="this.src='{{ url_for('static', filename='images/products/placeholder.svg') }}'">
+        </div>
+        
+        <!-- Product Info Details -->
+        <div class="flex flex-col justify-between space-y-6">
+            <div class="space-y-4">
+                <div>
+                    <span class="text-xs bg-blue-100 text-blue-600 px-3 py-1 rounded-full border border-blue-200/50 font-bold uppercase tracking-wider">{{ product.category }}</span>
+                    <span class="text-xs bg-slate-100 text-slate-600 px-3 py-1 rounded-full border border-slate-200/50 font-semibold ml-2">{{ product.brand }}</span>
+                </div>
+                
+                <h1 class="text-2xl sm:text-3xl font-extrabold font-display text-slate-800">{{ product.product_name }}</h1>
+                
+                <div class="flex items-center space-x-4">
+                    <span class="text-2xl font-mono font-extrabold text-blue-600">₹{{ product.price | int }}</span>
+                    <div class="flex items-center space-x-1 bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 rounded-lg text-amber-500 text-sm font-bold">
+                        <span>★</span> <span>{{ product.rating }}</span>
+                    </div>
+                </div>
+                
+                <hr class="border-blue-100/40">
+                
+                <div class="space-y-1">
+                    <h3 class="text-xs uppercase text-slate-400 font-bold tracking-wider">Product Description</h3>
+                    <p class="text-slate-600 text-sm leading-relaxed">{{ product.description }}</p>
+                </div>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button onclick="requestRecommendationFeedback('{{ product.product_id }}', this)" class="btn-neon flex-grow py-3 px-6 rounded-xl font-bold text-sm text-center shadow-lg transition">
+                        Recommend Product
+                    </button>
+                    <a href="{{ url_for('log_recommendation_to_db', product_id=product.product_id, rec_type='Manual View', sim_user=current_user) }}" class="btn-outline-neon px-6 py-3 rounded-xl font-bold text-sm text-center transition">
+                        Add to History
+                    </a>
+                </div>
+                <div class="text-[10px] text-slate-400 text-center">
+                    Interaction logging creates entries in `recommendation_history` to simulate collaborative data tracking.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Similar Products Row (Content-Based) -->
+    <div class="space-y-6">
+        <h2 class="text-2xl font-bold font-display text-gradient">🔍 Similar Products (Content-Based Filtering)</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            {% for sim in similar_products %}
+            <div class="product-card flex flex-col justify-between">
+                <div class="img-container aspect-[4/3] bg-white flex items-center justify-center relative">
+                    <img src="/{{ sim.image_path }}" alt="{{ sim.product_name }}" class="w-full h-full object-cover" onerror="this.src='{{ url_for('static', filename='images/products/placeholder.svg') }}'">
+                    <div class="absolute top-3 right-3 badge-similar text-[9px] px-2 py-0.5 rounded-full font-bold">
+                        Sim: {{ (sim.similarity_score * 100) | round }}%
+                    </div>
+                </div>
+                <div class="p-4 flex-grow flex flex-col justify-between space-y-3">
+                    <div>
+                        <div class="text-[10px] text-blue-600 font-bold uppercase tracking-wider">{{ sim.category }}</div>
+                        <h3 class="text-sm font-bold text-slate-800 line-clamp-1 mt-0.5" title="{{ sim.product_name }}">{{ sim.product_name }}</h3>
+                        <div class="text-xs text-slate-500 mt-1 line-clamp-2">{{ sim.description }}</div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between items-center text-sm mt-2">
+                            <span class="text-slate-800 font-mono font-bold">₹{{ sim.price | int }}</span>
+                            <span class="text-amber-500 font-bold flex items-center space-x-0.5"><span>★</span><span>{{ sim.rating }}</span></span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mt-3 pt-1">
+                            <a href="{{ url_for('product_details', product_id=sim.product_id, sim_user=current_user) }}" class="btn-outline-neon text-center text-xs py-2 rounded-xl transition duration-200">
+                                Details
+                            </a>
+                            <button onclick="requestRecommendationFeedback('{{ sim.product_id }}', this)" class="btn-neon text-xs py-2 rounded-xl transition duration-200">
+                                Recommend
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

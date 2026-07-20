@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Recommendation History | Aurora Recommender{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
+        <div>
+            <h1 class="text-3xl font-extrabold font-display text-gradient">Recommendation History</h1>
+            <p class="text-slate-500 text-sm mt-1">Logs of products simulated, clicked, or recommended for User #{{ current_user }}.</p>
+        </div>
+        
+        <!-- Clear logs button -->
+        <a href="{{ url_for('clear_history_to_db', sim_user=current_user) }}" class="text-xs border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 px-4 py-2 rounded-xl transition font-bold shadow-sm">
+            Clear Logs
+        </a>
+    </div>
+
+    <!-- History list -->
+    <div class="glass border border-blue-100/50 rounded-[24px] overflow-hidden p-6 shadow-sm">
+        {% if history_df is not none and not history_df.empty %}
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-600">
+                <thead class="text-xs uppercase text-slate-500 border-b border-blue-100/60">
+                    <tr>
+                        <th class="py-3 px-4 font-bold">Timestamp</th>
+                        <th class="py-3 px-4 font-bold">Product ID</th>
+                        <th class="py-3 px-4 font-bold">Product Name</th>
+                        <th class="py-3 px-4 font-bold">Category</th>
+                        <th class="py-3 px-4 font-bold">Type</th>
+                        <th class="py-3 px-4 text-right font-bold">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-blue-50/50 font-sans">
+                    {% for idx, row in history_df.iterrows() %}
+                    <tr class="hover:bg-blue-50/30 transition duration-150">
+                        <td class="py-4 px-4 text-xs font-mono text-slate-500">{{ row.timestamp }}</td>
+                        <td class="py-4 px-4 text-xs font-mono text-blue-600 font-bold">{{ row.product_id }}</td>
+                        <td class="py-4 px-4 font-semibold text-slate-800">
+                            <a href="{{ url_for('product_details', product_id=row.product_id, sim_user=current_user) }}" class="hover:text-blue-600 transition">
+                                {{ row.product_name }}
+                            </a>
+                        </td>
+                        <td class="py-4 px-4 text-xs text-slate-600">{{ row.category }}</td>
+                        <td class="py-4 px-4">
+                            <span class="text-[10px] px-2 py-0.5 rounded-full font-bold border 
+                                  {% if row.recommendation_type == 'Hybrid' or row.recommendation_type == 'Best Match' %}
+                                  bg-blue-100 text-blue-700 border-blue-200
+                                  {% elif row.recommendation_type == 'Content-Based' or row.recommendation_type == 'Manual View' %}
+                                  bg-indigo-100 text-indigo-700 border-indigo-200
+                                  {% else %}
+                                  bg-slate-100 text-slate-700 border-slate-200
+                                  {% endif %}">
+                                {{ row.recommendation_type }}
+                            </span>
+                        </td>
+                        <td class="py-4 px-4 text-right">
+                            <a href="{{ url_for('product_details', product_id=row.product_id, sim_user=current_user) }}" class="text-xs text-blue-600 hover:underline font-semibold">
+                                View Details
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-12">
+            <span class="text-4xl">🗒️</span>
+            <h3 class="text-lg font-bold text-slate-800 mt-2 font-display">No history logs</h3>
+            <p class="text-xs text-slate-500 mt-1">Simulate recommendations, click 'Details', or click 'Recommend' on the homepage to start building user logs.</p>
+            <a href="{{ url_for('home', sim_user=current_user) }}" class="inline-block mt-4 btn-neon text-xs px-6 py-2.5 rounded-xl font-bold">
+                Browse Products
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

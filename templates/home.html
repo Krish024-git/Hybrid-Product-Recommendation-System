@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}Home | Aurora Product Recommendations{% endblock %}
+
+{% block content %}
+<div class="space-y-12">
+    <!-- Premium Hero Section -->
+    <div class="relative overflow-hidden bg-gradient-to-br from-blue-50/60 to-indigo-50/60 border border-blue-100/50 rounded-[32px] p-8 md:p-12 text-left flex flex-col md:flex-row items-center justify-between gap-8 shadow-sm">
+        <div class="space-y-5 max-w-xl">
+            <span class="inline-block text-xs bg-blue-100 text-blue-600 px-3.5 py-1 rounded-full border border-blue-200/50 font-bold uppercase tracking-wider">Aurora AI Engine v2.0</span>
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-gradient font-display leading-tight">
+                Intelligent Product Personalization
+            </h1>
+            <p class="text-slate-600 text-base sm:text-lg leading-relaxed">
+                Simulating recommendation matrices in real-time. Change active user profiles in the navbar to test custom SVD collaborative and content-based scoring shifts immediately.
+            </p>
+            
+            <!-- Hero Sync Search Bar -->
+            <div class="relative w-full max-w-md pt-1">
+                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-slate-400">
+                    🔍
+                </span>
+                <input type="text" id="hero-search-input" placeholder="Search gadgets, style, home, fitness..." class="w-full bg-white border border-blue-100 rounded-2xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-blue-500 text-slate-800 shadow-sm transition-all duration-300">
+            </div>
+            
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
+                <a href="#catalog-explore" class="btn-neon text-center py-3 px-6 rounded-xl text-sm font-bold shadow-lg transition">
+                    Explore Store Catalog
+                </a>
+                <a href="{{ url_for('about') }}" class="btn-outline-neon text-center py-3 px-6 rounded-xl text-sm font-bold transition">
+                    View ML Analytics
+                </a>
+            </div>
+        </div>
+        
+        <!-- Generated Hero Image Banner -->
+        <div class="flex-shrink-0">
+            <img src="{{ url_for('static', filename='images/hero_banner.jpg') }}" alt="AI Shopping Banner" class="w-72 h-44 md:w-96 md:h-56 object-cover rounded-2xl shadow-lg border-2 border-white/60 hidden md:block">
+        </div>
+    </div>
+
+    <!-- AI Personalized Recommendation Row -->
+    <div class="space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <h2 class="text-2xl font-bold font-display text-gradient">
+                ✨ Recommended for You
+            </h2>
+            <div class="inline-flex items-center space-x-2 bg-blue-50 text-blue-600 border border-blue-100/50 px-3 py-1 rounded-full text-xs font-semibold">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-ping"></span>
+                <span>Active Profile: Simulated User #{{ current_user }}</span>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            {% for prod in recommendations %}
+            <div class="product-card flex flex-col justify-between">
+                <div class="img-container aspect-[4/3] bg-white flex items-center justify-center relative">
+                    <img src="/{{ prod.image_path }}" alt="{{ prod.product_name }}" class="w-full h-full object-cover" onerror="this.src='{{ url_for('static', filename='images/products/placeholder.svg') }}'">
+                    <div class="absolute top-3 right-3 badge-match text-[10px] px-2 py-0.5 rounded-full font-bold">
+                        Best Match
+                    </div>
+                </div>
+                <div class="p-4 flex-grow flex flex-col justify-between space-y-3">
+                    <div>
+                        <div class="text-[10px] text-blue-600 font-bold uppercase tracking-wider">{{ prod.category }}</div>
+                        <h3 class="text-sm font-bold text-slate-800 line-clamp-1 mt-0.5" title="{{ prod.product_name }}">{{ prod.product_name }}</h3>
+                        <div class="text-xs text-slate-500 mt-1 line-clamp-2">{{ prod.description }}</div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between items-center text-sm mt-2">
+                            <span class="text-slate-800 font-mono font-bold">₹{{ prod.price | int }}</span>
+                            <span class="text-amber-500 font-bold flex items-center space-x-0.5"><span>★</span><span>{{ prod.rating }}</span></span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mt-3 pt-1">
+                            <a href="{{ url_for('product_details', product_id=prod.product_id) }}" class="btn-outline-neon text-center text-xs py-2 rounded-xl transition duration-200">
+                                Details
+                            </a>
+                            <button onclick="requestRecommendationFeedback('{{ prod.product_id }}', this)" class="btn-neon text-xs py-2 rounded-xl transition duration-200">
+                                Recommend
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Multi-Column Layout: Left Filters, Right Product Grid -->
+    <div id="catalog-explore" class="grid grid-cols-1 lg:grid-cols-4 gap-8 pt-8 border-t border-blue-100/50">
+        <!-- Sidebar filters panel -->
+        <div class="lg:col-span-1 space-y-6">
+            <div class="glass p-6 rounded-3xl border border-blue-100/30 space-y-6 sticky top-24 shadow-sm">
+                <h3 class="text-lg font-bold font-display text-slate-800 flex items-center justify-between">
+                    <span>Filters</span>
+                    <button onclick="window.location.reload()" class="text-xs text-slate-500 hover:text-blue-600 transition">Reset</button>
+                </h3>
+                
+                <!-- Search -->
+                <div class="space-y-2">
+                    <label for="search-input" class="text-xs text-slate-600 font-bold">Search Products</label>
+                    <input type="text" id="search-input" placeholder="Type name, brand..." class="w-full bg-white border border-blue-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 text-slate-800 shadow-sm">
+                </div>
+
+                <!-- Category selector -->
+                <div class="space-y-2">
+                    <label for="category-filter" class="text-xs text-slate-600 font-bold">Category</label>
+                    <select id="category-filter" class="w-full bg-white border border-blue-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 text-slate-800 shadow-sm cursor-pointer font-semibold">
+                        <option value="all">All Categories</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat }}">{{ cat }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Brand selector -->
+                <div class="space-y-2">
+                    <label for="brand-filter" class="text-xs text-slate-600 font-bold">Brand</label>
+                    <select id="brand-filter" class="w-full bg-white border border-blue-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 text-slate-800 shadow-sm cursor-pointer font-semibold">
+                        <option value="all">All Brands</option>
+                        {% for brand in brands %}
+                        <option value="{{ brand }}">{{ brand }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Price range slider in Rupees -->
+                <div class="space-y-2">
+                    <div class="flex justify-between text-xs text-slate-600 font-bold">
+                        <span>Max Price</span>
+                        <span id="price-val" class="font-mono text-blue-600 font-bold">₹1,30,000</span>
+                    </div>
+                    <input type="range" id="price-range" min="500" max="130000" value="130000" step="500" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                </div>
+
+                <!-- Rating range slider -->
+                <div class="space-y-2">
+                    <div class="flex justify-between text-xs text-slate-600 font-bold">
+                        <span>Min Rating</span>
+                        <span id="rating-val" class="font-mono text-amber-500 font-bold">3.8 ★</span>
+                    </div>
+                    <input type="range" id="rating-range" min="3.8" max="5.0" value="3.8" step="0.1" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                </div>
+
+                <!-- Model Alpha Tuning Slider -->
+                <div class="space-y-2 pt-4 border-t border-blue-100/50">
+                    <div class="flex justify-between text-xs text-slate-600 font-bold">
+                        <span>Hybrid Weight (Alpha)</span>
+                        <span id="alpha-val" class="font-mono text-blue-600 font-bold">{{ alpha }}</span>
+                    </div>
+                    <input type="range" id="alpha-range" min="0.0" max="1.0" value="{{ alpha }}" step="0.1" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                    <div class="flex justify-between text-[9px] text-slate-400 font-semibold px-0.5">
+                        <span>Content (Text)</span>
+                        <span>Balanced</span>
+                        <span>SVD (Rating)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Products Grid -->
+        <div class="lg:col-span-3 space-y-6">
+            <h2 class="text-2xl font-bold font-display text-gradient">Explore Store Catalog</h2>
+            
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {% for prod in products %}
+                <div class="product-card-item product-card flex flex-col justify-between"
+                     data-name="{{ prod.product_name }}"
+                     data-brand="{{ prod.brand }}"
+                     data-category="{{ prod.category }}"
+                     data-price="{{ prod.price }}"
+                     data-rating="{{ prod.rating }}"
+                     data-desc="{{ prod.description }}">
+                    
+                    <div class="img-container aspect-[4/3] bg-white flex items-center justify-center">
+                        <img src="/{{ prod.image_path }}" alt="{{ prod.product_name }}" class="w-full h-full object-cover" onerror="this.src='{{ url_for('static', filename='images/products/placeholder.svg') }}'">
+                    </div>
+                    <div class="p-4 flex-grow flex flex-col justify-between space-y-3">
+                        <div>
+                            <div class="text-[10px] text-blue-600 font-bold uppercase tracking-wider">{{ prod.category }}</div>
+                            <h3 class="text-sm font-bold text-slate-800 line-clamp-1 mt-0.5" title="{{ prod.product_name }}">{{ prod.product_name }}</h3>
+                            <div class="text-xs text-slate-500 mt-1 line-clamp-2">{{ prod.description }}</div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between items-center text-sm mt-2">
+                                <span class="text-slate-800 font-mono font-bold">₹{{ prod.price | int }}</span>
+                                <span class="text-amber-500 font-bold flex items-center space-x-0.5"><span>★</span><span>{{ prod.rating }}</span></span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 mt-3 pt-1">
+                                <a href="{{ url_for('product_details', product_id=prod.product_id) }}" class="btn-outline-neon text-center text-xs py-2 rounded-xl transition duration-200">
+                                    Details
+                                </a>
+                                <button onclick="requestRecommendationFeedback('{{ prod.product_id }}', this)" class="btn-neon text-xs py-2 rounded-xl transition duration-200">
+                                    Recommend
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- No results visual -->
+            <div id="no-results" class="hidden text-center py-12 glass rounded-2xl border border-blue-100">
+                <div class="text-4xl">🔍</div>
+                <h3 class="text-lg font-bold text-slate-700 mt-2 font-display">No matches found</h3>
+                <p class="text-xs text-slate-500 mt-1">Try expanding your price slider or searching for a different keyword.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

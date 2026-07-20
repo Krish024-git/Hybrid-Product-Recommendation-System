@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}404 - Page Not Found | Aurora Recommender{% endblock %}
+
+{% block content %}
+<div class="text-center py-20 max-w-lg mx-auto space-y-6">
+    <div class="relative inline-block">
+        <h1 class="text-[120px] font-extrabold font-display leading-none text-gradient-blue">404</h1>
+        <div class="absolute -top-3 -right-3 text-4xl animate-bounce">🛰️</div>
+    </div>
+    
+    <div class="space-y-2">
+        <h2 class="text-2xl font-bold font-display text-slate-800">Lost in Latent Space</h2>
+        <p class="text-slate-500 text-sm">The dimension vector you are searching for does not match any items in our recommendation database.</p>
+    </div>
+
+    <div class="pt-4">
+        <a href="{{ url_for('home', sim_user=current_user) }}" class="btn-neon px-8 py-3 rounded-xl font-bold text-sm inline-block shadow-lg transition">
+            Return to Core Catalog
+        </a>
+    </div>
+</div>
+{% endblock %}

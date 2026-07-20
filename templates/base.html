@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AuroraRecs | Hybrid Product Recommendation System{% endblock %}</title>
+    
+    <!-- Tailwind CSS (via CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind CSS configuration for customized colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        indigo: {
+                            500: '#6366f1',
+                            950: '#0c0728',
+                        },
+                        cyan: {
+                            500: '#06b6d4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="min-h-screen flex flex-col relative text-slate-900">
+
+    <!-- Background Canvas & Blobs -->
+    <canvas id="particles-canvas"></canvas>
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Sticky Navigation Bar -->
+    <header class="sticky top-0 z-40 w-full glass border-b border-blue-100/50 shadow-sm backdrop-blur-md transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center">
+                    <a href="{{ url_for('home') }}" class="flex items-center space-x-2">
+                        <span class="text-2xl font-bold font-display text-gradient-blue tracking-wider">AURORA</span>
+                        <span class="text-[10px] bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full border border-blue-200 font-bold font-mono">AI REC</span>
+                    </a>
+                </div>
+                
+                <!-- Main Nav Links -->
+                <nav class="hidden md:flex space-x-8 text-sm font-medium">
+                    <a href="{{ url_for('home') }}" class="text-slate-600 hover:text-blue-600 transition">Home</a>
+                    <a href="{{ url_for('history') }}" class="text-slate-600 hover:text-blue-600 transition">History</a>
+                    <a href="{{ url_for('about') }}" class="text-slate-600 hover:text-blue-600 transition">Analytics</a>
+                    <a href="{{ url_for('contact') }}" class="text-slate-600 hover:text-blue-600 transition">Contact</a>
+                </nav>
+                
+                <!-- User Simulator Dropdown -->
+                <div class="flex items-center space-x-4">
+                    <form method="GET" action="" class="flex items-center space-x-2">
+                        <!-- Keep search params if on home page -->
+                        {% if search_query %}
+                        <input type="hidden" name="search" value="{{ search_query }}">
+                        {% endif %}
+                        {% if category_filter %}
+                        <input type="hidden" name="category" value="{{ category_filter }}">
+                        {% endif %}
+                        
+                        <label for="sim_user" class="hidden sm:inline text-xs text-slate-500 font-semibold font-display">Simulating User:</label>
+                        <select name="sim_user" id="sim_user" onchange="this.form.submit()" class="glass border border-blue-200 text-xs rounded-lg px-3 py-1.5 focus:outline-none focus:border-blue-500 cursor-pointer bg-white text-slate-800 shadow-sm font-semibold">
+                            {% for u_id in range(1, 21) %}
+                            <option value="{{ u_id }}" {% if current_user == u_id %}selected{% endif %}>User #{{ u_id }} (Demo Profile)</option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full z-10">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass border-t border-blue-100/60 py-8 mt-12 z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+            <div class="flex flex-col items-center md:items-start">
+                <span class="text-lg font-bold font-display text-gradient">AURORA RECOMMENDATIONS</span>
+                <span class="text-xs text-slate-500 mt-1">© 2026 Aurora Inc. All rights reserved. Powered by TF-IDF & Custom SVD.</span>
+            </div>
+            
+            <div class="flex space-x-6 text-sm">
+                <a href="{{ url_for('home') }}" class="text-slate-500 hover:text-blue-600 transition">Privacy Policy</a>
+                <a href="{{ url_for('about') }}" class="text-slate-500 hover:text-blue-600 transition">About Engine</a>
+                <a href="{{ url_for('contact') }}" class="text-slate-500 hover:text-blue-600 transition">Support</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- App Script -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

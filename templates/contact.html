@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us | Aurora Recommender{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto space-y-8">
+    <div class="text-center space-y-2">
+        <h1 class="text-3xl font-extrabold font-display text-gradient">Get In Touch</h1>
+        <p class="text-slate-500 text-sm">Have feedback on our Hybrid SVD Recommendation Engine? Reach out to our engineering team.</p>
+    </div>
+
+    <!-- Contact Form -->
+    <div class="glass border border-blue-100/50 rounded-[24px] p-6 md:p-8 space-y-6 shadow-sm">
+        <form onsubmit="event.preventDefault(); showToast('Form Submitted', 'Thank you for your feedback! Our team will contact you shortly.')" class="space-y-4 font-sans">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="space-y-1">
+                    <label for="name" class="text-xs text-slate-600 font-bold">Full Name</label>
+                    <input type="text" id="name" required placeholder="John Doe" class="w-full bg-white border border-blue-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 text-slate-800 shadow-sm">
+                </div>
+                <div class="space-y-1">
+                    <label for="email" class="text-xs text-slate-600 font-bold">Email Address</label>
+                    <input type="email" id="email" required placeholder="john@example.com" class="w-full bg-white border border-blue-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 text-slate-800 shadow-sm">
+                </div>
+            </div>
+            
+            <div class="space-y-1">
+                <label for="subject" class="text-xs text-slate-600 font-bold">Subject</label>
+                <input type="text" id="subject" required placeholder="Question about SVD matrices" class="w-full bg-white border border-blue-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 text-slate-800 shadow-sm">
+            </div>
+
+            <div class="space-y-1">
+                <label for="message" class="text-xs text-slate-600 font-bold">Message</label>
+                <textarea id="message" rows="5" required placeholder="Type your query..." class="w-full bg-white border border-blue-100 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 text-slate-800 shadow-sm"></textarea>
+            </div>
+
+            <button type="submit" class="w-full btn-neon py-3 rounded-xl font-bold text-sm text-center shadow-lg transition">
+                Send Message
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
